@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <title>Document</title>
+    <style>
+        * { margin: 0; padding: 0; }
+    
+
+/* ...existing code... */
+.nav {
+    border: none;
+    width: 11vw;
+    min-width: 120px;
+    max-width: 220px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    background: linear-gradient(135deg, #2c3e50 60%, #2980b9 100%);
+    z-index: 1000;
+    box-shadow: 2px 0 16px rgba(44, 62, 80, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 24px;
+    
+}
+
+.logo {
+    width: 80px;
+    height: 80px;
+    background: #fff;
+    border-radius: 50%;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.08);
+}
+
+.domains {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    align-items: center;
+}
+
+.domains a {
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 0;
+    width: 100%;
+    border-radius: 12px;
+    transition: background 0.2s, color 0.2s;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1rem;
+}
+
+.domains a:hover, .domains a:focus {
+    background: rgba(255,255,255,0.12);
+    color: #ffe082;
+}
+
+.domains i {
+    font-size: x-large;
+    margin-bottom: 4px;
+}
+/* ...existing code... */
+
+
+/* Adjust dash to account for fixed nav */
+.dash {
+    margin-left: 11vw; /* Same as .nav width */
+    width: 89vw;       /* 100vw - 11vw */
+    height: 100vh;
+    /* Remove border if not needed */
+}
+
+/* Adjust .title width */
+.title {
+    width: 87vw; /* 100vw - 11vw (nav) - 2vw (padding/margin) */
+    height: 80px;
+    left: 11vw;  /* Push right to not overlap nav */
+    position: fixed;
+    background: linear-gradient(135deg, #2c3e50 60%, #2980b9 100%);
+    color: white;
+    top: 0;
+    z-index: 5000;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    font-family: Arial, Helvetica, sans-serif;
+    justify-content: space-between;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.2);
+}
+    </style>
+</head>
+<body>
+    <div class="main">
+        <nav class="nav" id="nav">
+            <div class="logo"></div>
+            <div class="domains">
+                <a href="index.html"><i class="fa-solid fa-house"></i><p style="font-size: small;">Dashboard</p></a>
+                <a href="livefeed.html"><i class="fa-solid fa-video"></i><p style="font-size: small;">live feed</p></a>
+                <a href="history.html"><i class="fa-solid fa-clock-rotate-left"></i><p style="font-size: small;">history</p></a>
+                <a href=""><i class="fa-solid fa-location-dot"></i><p style="font-size: small;">map view</p></a>
+                <a href=""><i class="fa-solid fa-bars"></i><p style="font-size: small;">settings</p></a>
+            </div>
+        </nav>
+        <div class="dash" id="dash">
+            <div class="title">
+                <div>
+                    <h2>Camera Monitoring</h2>
+                    <p style="margin-top: 8px;">Real-time surveillance system</p>
+                </div>
+                <div style="margin: 0 71px;">
+                    <button style="width: 40px;height: 40px;border-radius: 40px;border: none;">
+                        <i class="fa-solid fa-user"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Add your main dashboard content here -->
+        </div>
+    </div>
+</body>
+</html>

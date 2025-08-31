@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="settings.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <title>Settings</title>
+</head>
+<body>
+<div class="nav"></div>
+<div class="settings-container">
+    <div class="head">
+        <div class="head-info">
+            <h1>Settings</h1>
+            <p>Configure system preferences and manage cameras</p>
+        </div>
+        <button class="savebt"><i class="fa-regular fa-floppy-disk"></i> Save All Changes</button>
+    </div>
+    <div class="settings-main">
+        <!-- Notification Preferences -->
+        <section class="settings-card">
+            <h2><i class="fa-regular fa-bell"></i> Notification Preferences</h2>
+            <div class="setting-row">
+                <div>
+                    <span class="setting-label"><i class="fa-regular fa-envelope"></i> Email Notifications</span>
+                    <span class="setting-desc">Receive alerts via email</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-row">
+                <div>
+                    <span class="setting-label"><i class="fa-regular fa-comment"></i>  SMS Notifications</span>
+                    <span class="setting-desc">Receive alerts via SMS</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <div class="setting-row">
+                <div>
+                    <span class="setting-label"><i class="fa-regular fa-bell"></i> Push Notifications</span>
+                    <span class="setting-desc">Browser push notifications</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <hr>
+                            <!-- Alert Types with Switches -->
+                <div class="setting-row" style="flex-direction: column; align-items: flex-start; gap: 0;">
+                    <span class="setting-label" style="margin-bottom: 10px;">Alert Types</span>
+                    <div class="alert-switch-row">
+                        <span>Camera Downtime</span>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="alert-switch-row">
+                        <span>Maintenance Alerts</span>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+ <div class="setting-row" style="flex-direction: column; align-items: flex-start;">
+    <label for="email" class="setting-label">Email Address</label>
+    <input type="email" id="email" placeholder="admin@camcare.com" class="setting-input" style="margin-bottom: 16px;">
+    <label for="phone" class="setting-label">Phone Number</label>
+    <input type="tel" id="phone" placeholder="+1 (555) 123-4567" class="setting-input">
+</div>
+        </section>
+        <!-- System Configuration -->
+        <section class="settings-card">
+            <h2><i class="fa-solid fa-gear"></i> System Configuration</h2>
+            <div class="setting-row">
+                <label class="setting-label" for="refresh">Refresh Interval</label>
+                <select id="refresh" class="setting-input">
+                    <option >5 seconds</option>
+                    <option selected>10 seconds</option>
+                    <option>30 seconds</option>
+                    <option>1 minute</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <label class="setting-label" for="retention">Data Retention</label>
+                <select id="retention" class="setting-input">
+                    <option>7 days</option>
+                    <option>14 days</option>
+                    <option selected>30 days</option>
+                    <option>90 days</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <label class="setting-label" for="timezone">Time Zone</label>
+                <select id="timezone" class="setting-input">
+                    <option>UTC</option>
+                    <option>GMT</option>
+                    <option>EST</option>
+                    <option>PST</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <label class="setting-label" for="api">API Endpoint</label>
+                <input type="text" id="api" class="setting-input" placeholder="https://api.camcare.com/v1">
+            </div>
+            <div class="setting-row">
+                <label class="setting-label" for="db">Database Connection</label>
+                <textarea id="db" class="setting-input" rows="2" placeholder="mysql://user:password@localhost:3306/camcare"></textarea>
+            </div>
+        </section>
+    </div>
+    <!-- Add New Camera Section -->
+<section class="settings-card wide-card">
+    <h2><i class="fa-solid fa-camera"></i> Add New Camera</h2>
+    <form class="add-camera-form">
+        <div class="add-camera-row">
+            <div class="add-camera-field">
+                <label for="cam-name">Camera Name *</label>
+                <input type="text" id="cam-name" placeholder="e.g., Main Entrance" required>
+            </div>
+            <div class="add-camera-field">
+                <label for="cam-location">Location *</label>
+                <input type="text" id="cam-location" placeholder="e.g., Building A Lobby" required>
+            </div>
+            <div class="add-camera-field">
+                <label for="cam-zone">Zone</label>
+                <input type="text" id="cam-zone" placeholder="North">
+            </div>
+            <div class="add-camera-field">
+                <label for="cam-ip">IP Address *</label>
+                <input type="text" id="cam-ip" placeholder="192.168.1.100" required>
+            </div>
+        </div>
+        <button type="submit" class="add-cam-btn"><i class="fa-solid fa-plus"></i> Add Camera</button>
+    </form>
+    <div class="add-cam-actions">
+        <button class="config-btn">Export Configuration</button>
+        <button class="config-btn">Import Configuration</button>
+        <button class="config-btn danger"><i class="fa-solid fa-trash"></i> Reset to Defaults</button>
+    </div>
+</section>
+</div>
+<script>
+
+async function addcam(e){
+    e.preventDefault();
+    try{
+        const res=await fetch('http://127.0.0.1:8000/addcam',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({
+                camera_name: document.getElementById('cam-name').value,
+                location: document.getElementById('cam-location').value,
+                zone: document.getElementById('cam-zone').value
+            })
+            });
+           const result=await res.json();
+           if(res.ok){
+            alert(result.message);
+           }else{
+            alert(result.detail);
+           }
+    }
+    catch(error){
+        if(error){
+            console.error('Error:',error);
+        }
+}
+}
+document.querySelector('.add-camera-form').addEventListener('submit',addcam);
+    fetch('navpartial.html')
+        .then(response => response.text())
+        .then(data => {
+            document.querySelector('.nav').innerHTML = data;
+        });
+</script>
+</body>
+</html>

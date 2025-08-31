@@ -1,0 +1,70 @@
+
+body {
+    background: #0d1622;
+}
+
+.dash, .main-dash {
+    background: #0d1622;
+}
+.stats {
+    width: 100%;
+    margin-top: 30px;
+    display: flex;
+    justify-content: flex-start;
+    gap: 24px;
+    background: none;
+    border: none;
+    height: 110px;
+}
+
+.stats-item {
+    background: #1a2332;
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.10);
+    width: 320px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 20px 28px;
+    gap: 10px;
+    border: 1.5px solid #232f41;
+    transition: box-shadow 0.2s;
+}
+
+.stats-item:hover {
+    box-shadow: 0 4px 16px rgba(44, 62, 80, 0.18);
+}
+
+.stats-item h4 {
+    font-size: 1.08rem;
+    margin: 0;
+    color: #b0bec5;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+}
+
+.stats-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    color: #fff;
+    letter-spacing: 0.01em;
+}
+
+.stats-item i {
+    font-size: 1.7rem;
+    margin-left: auto;
+    color: #2980b9;
+}
+
+.stats-item .stats-value.online {
+    color: #2ecc40;
+}
+.stats-item .stats-value.offline {
+    color: #e74c3c;
+}
+.stats-item .stats-value.uptime {
+    color: #13c1a5;
+}

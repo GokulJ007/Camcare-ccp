@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="livefeed.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <title>Live Feed</title>
+</head>
+<body>
+    <div class="nav"></div>
+    <div class="cont">
+        <div class="head">
+            <div>
+                <h1 style="font-size:1.5rem;">Live Feed</h1>
+                <p style="margin-top: 4px; color:#b0bec5;" id="location_name"></p>
+            </div>
+            <div style="display: flex; align-items: center; gap: 18px;">
+                <div style="width: 15px;height: 15px;border-radius: 15px;" id="STATUS-col"></div>
+                <h2 style="font-size:1.1rem; margin:0;">CAM-<span id="ID"></span></h2>
+            </div>
+        </div>
+        <div class="live-dash">
+            <div class="live-video">
+                <video src="" controls></video>
+            </div>
+            <div class="live-stats">
+                <div class="cam-details-card">
+                    <h2>Camera Details</h2>
+                    <div class="cam-detail-row">
+                        <span>Status:</span>
+                        <span class="cam-status online" id="status"></span>
+                    </div>
+                    <div class="cam-detail-row">
+                        <span>Uptime:</span>
+                        <span class="cam-uptime" id="uptime"></span>
+                    </div>
+                    <div class="cam-detail-row">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span id="location"></span>
+                    </div>
+                    <div class="cam-detail-row">
+                        <i class="fa-solid fa-wave-square"></i>
+                        <span>Zone: <b id="zone"></b></span>
+                    </div>
+                </div>
+                <div class="other-cams-card">
+                    <h2>Other Cameras</h2>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        let parms = new URLSearchParams(window.location.search);
+        let camId = parms.get("id");
+        fetch(`http://127.0.0.1:8000/livefeed/${camId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("location_name").textContent = data.location;
+            document.getElementById("ID").textContent = data.id;
+            document.getElementById("STATUS-col").style.backgroundColor =
+                data.cam_status.toLowerCase() === "online" ? "#2ecc40" :
+                data.cam_status.toLowerCase() === "offline" ? "#e74c3c" : "#fbc02d";
+            document.getElementById("status").textContent = data.cam_status;
+            document.getElementById("status").className = "cam-status " + data.cam_status.toLowerCase();
+            document.getElementById("uptime").textContent = data.uptime;
+            document.getElementById("location").textContent = data.location;
+            document.getElementById("zone").textContent = data.zone;
+        });
+
+        fetch("http://127.0.0.1:8000/getcam")
+        .then(response => response.json())  
+        .then(othercams=>{
+            let othercamsContainer = document.querySelector(".other-cams-card");
+            othercamsContainer.innerHTML = '<h2>Other Cameras</h2>'; // Clear existing content and add header
+            othercams.forEach(cam => {
+                if (cam.id!==camId) { // Exclude the current camera
+                    let camDiv = document.createElement("div");
+                    camDiv.className = "other-cam";
+                    camDiv.innerHTML = `
+                        <a href="livefeed.html?id=${cam.id}" class="other-cam-link">
+                            <span>${cam.location}</span><br>
+                            <span class="other-cam-zone">${cam.zone}</span>
+                        </a>
+                        <span class="cam-dot ${cam.cam_status.toLowerCase()}"></span>
+                    `;
+                    othercamsContainer.appendChild(camDiv);
+                }
+            });
+        })
+
+        fetch('navpartial.html')
+            .then(response => response.text())
+            .then(html => {
+                document.querySelector('.nav').innerHTML = html;
+            })
+            .catch(error => console.error('Error loading nav:', error));
+    </script>
+</body>
+</html>

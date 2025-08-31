@@ -1,0 +1,178 @@
+      html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #0d1622;
+            font-family: 'Inter', Arial, Helvetica, sans-serif;
+            color: #fff;
+            box-sizing: border-box;
+        }
+
+        .main-history {
+            margin-left: 11vw;
+            width: 89vw;
+            min-height: 100vh;
+            padding: 0 0 32px 0;
+            box-sizing: border-box;
+            background: #0d1622;
+        }
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 32px 40px 0 40px;
+        }
+        .history-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .history-header p {
+            color: #b0bec5;
+            font-size: 1rem;
+            margin: 0;
+        }
+        .export-btn {
+            background: #13c1a5;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .export-btn:hover {
+            background: #0ea98c;
+        }
+        .history-filters {
+            background: #151e2b;
+            border-radius: 12px;
+            margin: 32px 40px 0 40px;
+            padding: 18px 24px;
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
+        .history-filters label {
+            font-weight: 600;
+            margin-right: 10px;
+        }
+        .history-filters input,
+        .history-filters select {
+            background: #192233;
+            border: none;
+            
+            border-radius: 6px;
+            color: #fff;
+            padding: 10px 14px;
+            font-size: 1rem;
+            outline: none;
+        }
+        .history-filters input::placeholder {
+            color: #b0bec5;
+        }
+        .history-table-container {
+            margin: 32px 40px 0 40px;
+        }
+        .history-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: #151e2b;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .history-table th, .history-table td {
+            padding: 18px 18px;
+            text-align: left;
+        }
+        .history-table th {
+            background: #232f41;
+            color: #b0bec5;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        .history-table td {
+            border-top: 1px solid #232f41;
+            font-size: 1.05rem;
+        }
+        .history-table tr:first-child td {
+            border-top: none;
+        }
+        .cam-name {
+            font-weight: 600;
+            color: #fff;
+        }
+        .cam-id {
+            font-size: 0.95rem;
+            color: #b0bec5;
+            font-weight: 400;
+            margin-top: 2px;
+            display: block;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: lowercase;
+        }
+        .status-badge.online {
+           
+            color: #13c1a5;
+        }
+        .status-badge.offline {
+            color: #e74c3c;
+        }
+        .history-table .fa-calendar {
+            color: #ffe082;
+            margin-right: 8px;
+        }
+        .history-summary {
+            margin: 32px 40px 0 40px;
+            display: flex;
+            gap: 24px;
+        }
+        .summary-card {
+            flex: 1;
+            background: #151e2b;
+            border-radius: 12px;
+            padding: 32px 0 24px 0;
+            text-align: center;
+        }
+        .summary-card .summary-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #13c1a5;
+        }
+        .summary-card .summary-label {
+            color: #b0bec5;
+            font-size: 1.1rem;
+            margin-top: 8px;
+            display: block;
+        }
+        .summary-card.offline .summary-value {
+            color: #e74c3c;
+        }
+        .summary-card.total .summary-value {
+            color: #fff;
+        }
+        @media (max-width: 900px) {
+            .main-history, .history-header, .history-filters, .history-table-container, .history-summary {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+            }
+            .main-history {
+                width: 100vw;
+                margin-left: 0;
+            }
+        }

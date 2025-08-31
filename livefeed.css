@@ -1,0 +1,135 @@
+body {
+    background: #0d1622;
+    color: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+.cont {
+    width: 89vw;
+    min-height: 100vh;
+    margin-left: 11vw;
+    box-sizing: border-box;
+    padding-top: 32px;
+    background: #0d1622;
+}
+.head {
+    height: 90px;
+    width: 95%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #151e2b;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    padding: 0 32px;
+    color: #fff;
+}
+.live-dash {
+    width: 100%;
+    min-height: 600px;
+    display: flex;
+    gap: 24px;
+}
+.live-video {
+    width: 75%;
+    min-width: 350px;
+}
+.live-video video {
+    width: 100%;
+    height: 480px;
+    border-radius: 20px;
+    object-fit: cover;
+    border: none;
+    background: #222;
+}
+.live-stats {
+    width: 25%;
+    min-width: 270px;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.cam-details-card, .other-cams-card {
+    background: #151e2b;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(44,62,80,0.08);
+    padding: 20px 18px 18px 18px;
+    color: #fff;
+    margin-bottom: 10px;
+}
+.cam-details-card h2,
+.other-cams-card h2 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    font-weight: bold;
+}
+.cam-detail-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+.cam-detail-row i {
+    color: #ffe082;
+    font-size: 1.1rem;
+    margin-right: 7px;
+}
+.cam-status {
+    font-weight: bold;
+    text-transform: lowercase;
+    border-radius: 6px;
+    padding: 2px 10px;
+    font-size: 1rem;
+}
+.cam-status.online { color: #2ecc40; }
+.cam-status.offline { color: #e74c3c; }
+.cam-status.error { color: #fbc02d; }
+.cam-uptime { color: #2ecc40; font-weight: bold; }
+.other-cam {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #192233;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+}
+.other-cam-link {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    transition: color 0.2s;
+}
+.other-cam-link:hover {
+    color: #ffe082;
+    text-decoration: none;
+}
+.other-cam-zone {
+    font-size: 0.95rem;
+    color: #b0bec5;
+}
+.cam-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-left: 10px;
+}
+.cam-dot.online { background: #2ecc40; }
+.cam-dot.offline { background: #e74c3c; }
+.cam-dot.error { background: #fbc02d; }
+@media (max-width: 900px) {
+    .live-dash {
+        flex-direction: column;
+    }
+    .live-video, .live-stats {
+        width: 100%;
+        max-width: 100%;
+    }
+    .live-stats {
+        margin-top: 20px;
+    }
+}

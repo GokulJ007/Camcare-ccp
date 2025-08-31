@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Camera</title>
+      <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input {
+            padding: 5px;
+            margin-left: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>Add Camera</h2>
+    <form id="add-cam-form">
+        <label>
+            Camera Name:
+            <input type="text" id="camera_name" required>
+        </label><br><br>
+        <label>
+            Location:
+            <input type="text" id="location" required>
+        </label><br><br>
+        <label>
+            Zone:
+            <input type="text" id="zone" required>
+        </label><br><br>
+        <label>
+            Camera Status:
+            <input type="text" id="cam_status" value="online" required>
+        </label><br><br>
+        <label>
+            Uptime:
+            <input type="number" id="uptime" value="100" step="0.01" required>
+        </label><br><br>
+        <button type="submit">Add Camera</button>
+    </form>
+    <div id="result"></div>
+    <script>
+        document.getElementById('add-cam-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const data = {
+                camera_name: document.getElementById('camera_name').value,
+                location: document.getElementById('location').value,
+                zone: document.getElementById('zone').value,
+                cam_status: document.getElementById('cam_status').value,
+                uptime: parseFloat(document.getElementById('uptime').value)
+            };
+            try {
+                const res = await fetch('http://127.0.0.1:8000/newcam', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                document.getElementById('result').textContent = res.ok ? result.message : result.detail;
+            } catch (err) {
+                document.getElementById('result').textContent = 'Error: ' + err;
+            }
+        });
+    </script>
+</body>
+</html>

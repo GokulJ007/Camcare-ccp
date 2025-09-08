@@ -35,7 +35,7 @@
             </select>
         </div>
         <div class="history-table-container">
-            <table class="history-table">
+            <table class="history-table" id="table">
                 <thead>
                     <tr>
                         <th>CAMERA</th>
@@ -45,51 +45,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>
-                            <span class="cam-name">Main Street Junction</span>
-                            <span class="cam-id">CAM-001</span>
-                        </td>
-                        <td><span class="status-badge online">online</span></td>
-                        <td><i class="fa-regular fa-calendar"></i> 1/27/2025, 4:00:00 PM</td>
-                        <td>2h 30m</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="cam-name">Shopping Plaza</span>
-                            <span class="cam-id">CAM-003</span>
-                        </td>
-                        <td><span class="status-badge offline">offline</span></td>
-                        <td><i class="fa-regular fa-calendar"></i> 1/27/2025, 1:45:00 PM</td>
-                        <td>2h 15m</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="cam-name">Central Park North</span>
-                            <span class="cam-id">CAM-002</span>
-                        </td>
-                        <td><span class="status-badge online">online</span></td>
-                        <td><i class="fa-regular fa-calendar"></i> 1/27/2025, 11:30:00 AM</td>
-                        <td>4h 30m</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="cam-name">Highway Overpass</span>
-                            <span class="cam-id">CAM-006</span>
-                        </td>
-                        <td><span class="status-badge offline">offline</span></td>
-                        <td><i class="fa-regular fa-calendar"></i> 1/27/2025, 1:15:00 PM</td>
-                        <td>2h 45m</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <span class="cam-name">University Campus</span>
-                            <span class="cam-id">CAM-004</span>
-                        </td>
-                        <td><span class="status-badge online">online</span></td>
-                        <td><i class="fa-regular fa-calendar"></i> 1/27/2025, 11:00:00 AM</td>
-                        <td>5h</td>
-                    </tr>
+                  
                 </tbody>
             </table>
         </div>
@@ -109,6 +65,30 @@
         </div>
     </div>
     <script>
+let cont=document.getElementById('table');
+setInterval(() => {
+fetch("http://127.0.0.1:8000/gethistory")
+.then(response => response.json())
+.then(data => { 
+    let tbody = document.querySelector("#table tbody");
+    tbody.innerHTML = ""; // Clear previous rows
+    data.forEach(datas =>{
+        let row = document.createElement('tr');
+        row.innerHTML = `
+            <td>
+                <span class="cam-name">${datas.location}</span>
+                <span class="cam-id">CAM-${datas.cam_id}</span>
+            </td>
+            <td><span class="status-badge ${datas.camstatus.toLowerCase()}">${datas.camstatus}</span></td>
+            <td><i class="fa-regular fa-calendar"></i> ${datas.start_time}</td>
+            <td>${datas.duration_seconds!==null?datas.duration_seconds + "s" : "-"}</td>
+        `;
+        tbody.appendChild(row);
+    }); 
+});
+},10000);
+
+
  fetch('navpartial.html')
     .then(response => response.text())
     .then(html => {

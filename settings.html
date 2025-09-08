@@ -15,7 +15,7 @@
             <h1>Settings</h1>
             <p>Configure system preferences and manage cameras</p>
         </div>
-        <button class="savebt"><i class="fa-regular fa-floppy-disk"></i> Save All Changes</button>
+        <button class="savebt"  onclick="Interval()"><i class="fa-regular fa-floppy-disk"></i> Save All Changes</button>
     </div>
     <div class="settings-main">
         <!-- Notification Preferences -->
@@ -82,7 +82,7 @@
             <h2><i class="fa-solid fa-gear"></i> System Configuration</h2>
             <div class="setting-row">
                 <label class="setting-label" for="refresh">Refresh Interval</label>
-                <select id="refresh" class="setting-input">
+                <select id="refresh"  class="setting-input">
                     <option >5 seconds</option>
                     <option selected>10 seconds</option>
                     <option>30 seconds</option>
@@ -149,6 +149,13 @@
 </section>
 </div>
 <script>
+
+    function Interval(){
+        let Interval=document.getElementById('refresh').value;
+        localStorage.setItem('refreshInterval',Interval);
+        alert('Refresh Interval set to '+Interval);
+    }
+    document.getElementById('refresh').value=localStorage.getItem('refreshInterval')||"10 seconds";
 
 async function addcam(e){
     e.preventDefault();

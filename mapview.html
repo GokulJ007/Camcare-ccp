@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cam Care — Map View</title>
+  <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+  <style>
+    /* Colors & tokens */
+    :root{
+      --bg:#0b1720; --panel:#0f1b24; --card:#15212a; --muted:#8fa0ad; --accent:#15c084; --danger:#ef4444; --warn:#f59e0b; --nav:#0c1820;
+    }
+    html,body{height:100%;margin:0;font-family:Inter,Segoe UI,Arial;background:var(--bg);color:#e6eef6}
+
+    /* Layout */
+    .shell{display:flex;height:100vh}
+    .sidebar{width:220px;background:linear-gradient(180deg,var(--nav),#071017);padding:20px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+    .logo{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#0ee7b7,#00a6ff)}
+    .brand h1{font-size:16px;margin:0}
+    .nav{display:flex;flex-direction:column;gap:8px;margin-top:18px}
+    .nav a{display:flex;align-items:center;gap:12px;padding:10px;border-radius:8px;color:#cfe5ee;text-decoration:none}
+    .nav a.active{background:linear-gradient(90deg,#0dbf9a,#0ca3e9);color:#001f20;font-weight:600}
+    .nav a:hover{background:rgba(255,255,255,0.02)}
+    .footer{font-size:13px;color:var(--muted)}
+
+    .main{flex:1;display:flex;flex-direction:column;padding:20px;box-sizing:border-box}
+  /* when a separate side nav is injected make room for it */
+  .has-side-nav .main{margin-left: max(11vw,120px);} 
+    .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .page-title{font-size:20px;font-weight:700}
+    .page-sub{color:var(--muted);font-size:13px}
+
+    .content{display:flex;gap:20px;flex:1}
+    .map-card{flex:1;background:linear-gradient(180deg,#0e1a22 0%, #071017 100%);border-radius:8px;padding:18px;box-sizing:border-box;position:relative}
+    .map-inner{height:70vh;border-radius:8px;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
+    .controls{position:absolute;right:20px;top:20px}
+
+    .sidepanel{width:360px;display:flex;flex-direction:column;gap:16px}
+    .panel{background:var(--card);border-radius:8px;padding:14px;box-sizing:border-box}
+    .camera-list{max-height:60vh;overflow:auto;margin-top:6px}
+    .cam{display:flex;align-items:center;justify-content:space-between;padding:12px;border-radius:6px;border:1px solid rgba(255,255,255,0.02);margin-bottom:10px}
+    .cam-left{display:flex;gap:12px;align-items:center}
+    .status-dot{width:12px;height:12px;border-radius:50%}
+  .status-dot.online{background:var(--accent);box-shadow:0 0 8px rgba(21,192,132,0.25)}
+  .status-dot.offline{background:var(--danger);box-shadow:0 0 8px rgba(239,68,68,0.18)}
+  .status-dot.err{background:var(--warn);box-shadow:0 0 8px rgba(245,158,11,0.22)}
+    .cam-meta{font-size:13px}
+    .cam-name{font-weight:700}
+    .cam-loc{color:var(--muted);font-size:12px}
+    .uptime{color:var(--muted);font-size:13px}
+
+    .legend{position:absolute;left:18px;bottom:18px;background:rgba(0,0,0,0.45);padding:12px;border-radius:8px;color:var(--muted);font-size:13px}
+
+    /* small helpers */
+    .muted{color:var(--muted)}
+    .label{font-weight:700;margin-bottom:8px}
+
+    /* scrollbar styling */
+    .camera-list::-webkit-scrollbar{width:8px}
+    .camera-list::-webkit-scrollbar-thumb{background:#0b2a34;border-radius:8px}
+
+    @media(max-width:1000px){.sidepanel{display:none}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+  <!-- Nav will be injected from navpartial.html -->
+  <div class="nav"></div>
+
+    <main class="main">
+      <div class="topbar">
+        <div>
+          <div class="page-title">Camera Monitoring</div>
+          <div class="page-sub">Real-time surveillance system</div>
+        </div>
+          <div style="display:flex;align-items:center;gap:16px">
+          <div class="muted">Online <span style="color:var(--accent)">●</span></div>
+          <div class="muted">Error <span style="color:var(--warn)">●</span></div>
+          <div class="muted">Offline <span style="color:var(--danger)">●</span></div>
+        </div>
+      </div>
+
+      <div class="content">
+        <section class="map-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <div>
+              <div style="font-weight:700;font-size:18px">Map View</div>
+              <div class="muted" style="font-size:13px">Geographic overview of all camera locations</div>
+            </div>
+            <div class="controls"><button style="background:#0b2a34;border-radius:6px;padding:8px;border:none;color:var(--muted)">⤢</button></div>
+          </div>
+
+          <div class="map-inner" id="map"></div>
+
+          <div class="legend">
+            <div style="font-weight:700;margin-bottom:6px">Camera Status</div>
+            <div><span style="display:inline-block;width:10px;height:10px;background:var(--accent);border-radius:50%;margin-right:8px"></span>Online</div>
+            <div style="margin-top:6px"><span style="display:inline-block;width:10px;height:10px;background:var(--warn);border-radius:50%;margin-right:8px"></span>Error</div>
+            <div style="margin-top:6px"><span style="display:inline-block;width:10px;height:10px;background:var(--danger);border-radius:50%;margin-right:8px"></span>Offline</div>
+          </div>
+        </section>
+
+        <aside class="sidepanel">
+          <div class="panel">
+            <div class="label">All Cameras</div>
+            <div class="camera-list" id="cameraList">
+              <!-- camera items injected here -->
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="label">Zone Overview</div>
+            <div class="muted">North: <strong id="zoneNorth">-</strong></div>
+            <div class="muted">South: <strong id="zoneSouth">-</strong></div>
+            <div class="muted">East: <strong id="zoneEast">-</strong></div>
+            <div class="muted">West: <strong id="zoneWest">-</strong></div>
+          </div>
+        </aside>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+  <script>
+    // Mapbox token (keep or replace)
+    mapboxgl.accessToken = 'pk.eyJ1IjoiaW1nb2t1bGoiLCJhIjoiY21mNTUzbzBjMDF6ajJsbXo2MHR3dThmeSJ9.HcCQ5dmrH3yZSiuRUWtzxw';
+
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/dark-v11',
+      center: [-74.0060,40.7128],
+      zoom: 10
+    });
+
+    // Demo fallback coordinates
+    // const demoCameras = [
+    //   {id:1,camera_name:'Main Street Junction', location:'Downtown District', cam_status:'online', uptime:98.5, latitude:40.7128, longitude:-74.0060, zone:'North'},
+    //   {id:2,camera_name:'Central Park North', location:'Park District', cam_status:'online', uptime:99.2, latitude:40.7829, longitude:-73.9654, zone:'North'},
+    //   {id:3,camera_name:'Shopping Plaza', location:'Commercial Zone', cam_status:'offline', uptime:85.7, latitude:40.7580, longitude:-73.9855, zone:'East'},
+    //   {id:4,camera_name:'University Campus', location:'Education District', cam_status:'online', uptime:97.8, latitude:40.7295, longitude:-73.9965, zone:'South'},
+    //   {id:5,camera_name:'Industrial District', location:'Industrial Area', cam_status:'online', uptime:92.1, latitude:40.7060, longitude:-74.0086, zone:'West'},
+    //   {id:6,camera_name:'Harbor View', location:'Seaport', cam_status:'offline', uptime:78.3, latitude:40.7003, longitude:-74.0122, zone:'South'}
+    // ];
+
+    let markers = [];
+    function clearMarkers(){ markers.forEach(m=>m.remove()); markers = []; }
+
+    function addMarker(cam){
+      const el = document.createElement('div');
+      el.style.width = '18px'; el.style.height = '18px'; el.style.borderRadius = '50%';
+
+      // Normalize status and pick colors/shadows
+      const status = String(cam.cam_status || '').toLowerCase();
+      let bg = '#ef4444';
+      let shadow = '0 0 8px rgba(239,68,68,0.28)';
+      if(status === 'online'){
+        bg = '#15c084';
+        shadow = '0 0 10px rgba(21,192,132,0.35)';
+      } else if(status === 'err' || status === 'error'){
+        bg = '#f59e0b';
+        shadow = '0 0 8px rgba(245,158,11,0.22)';
+      }
+
+      el.style.boxShadow = shadow;
+      el.style.background = bg;
+      el.style.border = '3px solid rgba(0,0,0,0.25)';
+
+      const marker = new mapboxgl.Marker({element:el}).setLngLat([cam.longitude, cam.latitude]);
+      const popup = new mapboxgl.Popup({offset:25}).setHTML(`<strong>${cam.camera_name}</strong><div style="color:var(--muted);font-size:13px">${cam.location}</div><div style="margin-top:6px">Status: <strong>${cam.cam_status}</strong><br>Uptime: ${cam.uptime}%</div>`);
+      marker.setPopup(popup);
+      marker.addTo(map);
+      markers.push(marker);
+      return marker;
+    }
+
+    function buildList(cameras){
+      const list = document.getElementById('cameraList'); list.innerHTML = '';
+      cameras.forEach(cam=>{
+        const item = document.createElement('div'); item.className='cam';
+  const left = document.createElement('div'); left.className='cam-left';
+  const statusLower = String(cam.cam_status || '').toLowerCase();
+  const dotClass = statusLower === 'online' ? 'online' : (statusLower === 'err' || statusLower === 'error' ? 'err' : 'offline');
+  const dot = document.createElement('div'); dot.className='status-dot ' + dotClass;
+        const meta = document.createElement('div'); meta.className='cam-meta';
+        meta.innerHTML = `<div class="cam-name">${cam.camera_name}</div><div class="cam-loc">${cam.location}</div>`;
+        left.appendChild(dot); left.appendChild(meta);
+        const right = document.createElement('div'); right.innerHTML = `<div class="uptime">${cam.uptime}%</div>`;
+        item.appendChild(left); item.appendChild(right);
+        item.addEventListener('click', ()=>{
+          map.flyTo({center:[cam.longitude,cam.latitude],zoom:15,essential:true});
+          const m = markers.find(mm=>{ try{return mm.getLngLat().lng === cam.longitude && mm.getLngLat().lat === cam.latitude}catch(e){return false} });
+          if(m) m.togglePopup();
+        });
+        list.appendChild(item);
+      });
+    }
+
+    function updateZoneOverview(cameras){
+      const zones = {North:0,South:0,East:0,West:0};
+      cameras.forEach(c=>{ if(c.zone && zones.hasOwnProperty(c.zone)) zones[c.zone] += 1; });
+      document.getElementById('zoneNorth').textContent = zones.North + ' / ' + cameras.length;
+      document.getElementById('zoneSouth').textContent = zones.South + ' / ' + cameras.length;
+      document.getElementById('zoneEast').textContent = zones.East + ' / ' + cameras.length;
+      document.getElementById('zoneWest').textContent = zones.West + ' / ' + cameras.length;
+    }
+
+   async function loadCameras(){
+  try{
+    const res = await fetch('http://127.0.0.1:8000/getcam');                // must be same-origin (use /map route)
+    if(!res.ok) throw new Error('Fetch failed: '+res.status);
+    const cams = await res.json();
+    // Use only DB rows when present
+    const source = (Array.isArray(cams) && cams.length) ? cams : [];
+    const out = [];
+    const seen = new Set();
+
+    source.forEach(c => {
+      // Normalize numeric coords reliably
+      const lat = Number(c.latitude ?? c.lat ?? 0);
+      const lon = Number(c.longitude ?? c.lon ?? 0);
+      const id = c.id ?? `${lat}:${lon}:${c.camera_name}`;
+
+      if(!lat || !lon) return;           // skip invalid coords
+      if(seen.has(id)) return;           // skip duplicates by id
+      seen.add(id);
+
+      out.push({
+        id,
+        camera_name: c.camera_name || c.camera || 'Camera',
+        location: c.location || '',
+        cam_status: c.cam_status || c.status || 'online',
+        uptime: (typeof c.uptime !== 'undefined') ? c.uptime : 100,
+        latitude: lat,
+        longitude: lon,
+        zone: c.zone || 'Unknown'
+      });
+    });
+
+    if(out.length === 0){
+      // optional: if you really want demo fallback, uncomment:
+      // use demoCameras here
+      console.warn('No valid camera rows from DB - nothing to show');
+      clearMarkers();
+      buildList([]); updateZoneOverview([]);
+      return;
+    }
+
+    clearMarkers();                       // remove old markers
+    out.forEach(addMarker);
+    buildList(out);
+    updateZoneOverview(out);
+
+    // fit to bounds
+    const bounds = new mapboxgl.LngLatBounds();
+    out.forEach(c=>bounds.extend([c.longitude,c.latitude]));
+    map.fitBounds(bounds,{padding:80,maxZoom:12});
+  }catch(err){
+    console.error('Error loading cameras from backend',err);
+    // If you want demo fallback if backend fails, enable the lines below:
+    // clearMarkers(); demoCameras.forEach(addMarker); buildList(demoCameras); updateZoneOverview(demoCameras);
+  }
+}
+
+    loadCameras();
+    setInterval(loadCameras,30000);
+  </script>
+  <script>
+    // Fetch navpartial.html, copy any <link>/<style> into the current head, and inject only the <nav> element.
+    (async function(){
+      const placeholder = document.querySelector('.nav');
+      try{
+        const res = await fetch('navpartial.html', {cache:'no-store'});
+        if(!res.ok) throw new Error('Nav fetch failed: '+res.status);
+        const text = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, 'text/html');
+
+        const headNodes = doc.head ? Array.from(doc.head.querySelectorAll('link, style')) : [];
+        headNodes.forEach(n => {
+          if(n.tagName.toLowerCase() === 'link'){
+            const href = n.getAttribute('href');
+            if(href && !document.head.querySelector(`link[href="${href}"]`)){
+              document.head.appendChild(n.cloneNode(true));
+            }
+          } else {
+            // style
+            document.head.appendChild(n.cloneNode(true));
+          }
+        });
+
+        const nav = doc.querySelector('nav');
+        if(nav){
+          // replace placeholder with the nav element
+          placeholder.replaceWith(nav.cloneNode(true));
+          document.body.classList.add('has-side-nav');
+        } else {
+          // fallback: insert the raw HTML
+          placeholder.innerHTML = text;
+        }
+      }catch(err){
+        console.error('Error loading navpartial.html', err);
+        // keep placeholder (unstyled) as fallback
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="livefeed.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* decorative divider used in live-stats */
+        .divider{display:flex;align-items:center;margin:12px 0;}
+        .divider::before,.divider::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent);}
+        .divider .dot{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;background:linear-gradient(180deg,#0b2a34,#12343a);border:1px solid rgba(255,255,255,0.04);box-shadow:0 2px 8px rgba(0,0,0,0.4);margin:0 12px;color:var(--muted);}
+        .divider .dot i{font-size:10px;color:#9fbac6}
+    </style>
     <title>Live Feed</title>
 </head>
 <body>
@@ -27,22 +34,25 @@
             <div class="live-stats">
                 <div class="cam-details-card">
                     <h2>Camera Details</h2>
-                    <div class="cam-detail-row">
-                        <span>Status:</span>
-                        <span class="cam-status online" id="status"></span>
-                    </div>
-                    <div class="cam-detail-row">
-                        <span>Uptime:</span>
-                        <span class="cam-uptime" id="uptime"></span>
-                    </div>
-                    <div class="cam-detail-row">
-                        <i class="fa-solid fa-location-dot"></i>
-                        <span id="location"></span>
-                    </div>
-                    <div class="cam-detail-row">
-                        <i class="fa-solid fa-wave-square"></i>
-                        <span>Zone: <b id="zone"></b></span>
-                    </div>
+                            <div class="cam-detail-row">
+                                <span>Status:</span>
+                                <span class="cam-status online" id="status"></span>
+                            </div>
+                            <div class="divider"><span class="dot"><i class="fa-solid fa-circle"></i></span></div>
+                            <div class="cam-detail-row">
+                                <span>Uptime:</span>
+                                <span class="cam-uptime" id="uptime"></span>
+                            </div>
+                            <div class="divider"><span class="dot"><i class="fa-solid fa-location-dot"></i></span></div>
+                            <div class="cam-detail-row">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <span id="location"></span>
+                            </div>
+                            <div class="divider"><span class="dot"><i class="fa-solid fa-map-pin"></i></span></div>
+                            <div class="cam-detail-row">
+                                <i class="fa-solid fa-wave-square"></i>
+                                <span>Zone: <b id="zone"></b></span>
+                            </div>
                 </div>
                 <div class="other-cams-card">
                     <h2>Other Cameras</h2>
@@ -54,22 +64,8 @@
     <script>
         let parms = new URLSearchParams(window.location.search);
         let camId = parms.get("id");
-        fetch(`http://127.0.0.1:8000/livefeed/${camId}`)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById("location_name").textContent = data.location;
-            document.getElementById("ID").textContent = data.id;
-            document.getElementById("STATUS-col").style.backgroundColor =
-                data.cam_status.toLowerCase() === "online" ? "#2ecc40" :
-                data.cam_status.toLowerCase() === "offline" ? "#e74c3c" : "#fbc02d";
-            document.getElementById("status").textContent = data.cam_status;
-            document.getElementById("status").className = "cam-status " + data.cam_status.toLowerCase();
-            document.getElementById("uptime").textContent = data.uptime;
-            document.getElementById("location").textContent = data.location;
-            document.getElementById("zone").textContent = data.zone;
-        });
-
-        fetch("http://127.0.0.1:8000/getcam")
+        function livecams(){
+            fetch("http://127.0.0.1:8000/getcam")
         .then(response => response.json())  
         .then(othercams=>{
             let othercamsContainer = document.querySelector(".other-cams-card");
@@ -89,6 +85,54 @@
                 }
             });
         })
+            if(!camId){
+                fetch("http://127.0.0.1:8000/livefeed_no_id")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("location_name").textContent = data.location;
+                    document.getElementById("ID").textContent = data.id;
+                    document.getElementById("STATUS-col").style.backgroundColor =
+                        data.cam_status.toLowerCase() === "online" ? "#2ecc40" :
+                        data.cam_status.toLowerCase() === "offline" ? "#e74c3c" : "#fbc02d";
+                    document.getElementById("status").textContent = data.cam_status;
+                    document.getElementById("status").className = "cam-status " + data.cam_status.toLowerCase();
+                    document.getElementById("uptime").textContent = data.uptime + "%";
+                    document.getElementById("location").textContent = data.location;
+                    document.getElementById("zone").textContent = data.zone;
+
+                });
+            }else{
+        fetch(`http://127.0.0.1:8000/livefeed/${camId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("location_name").textContent = data.location;
+            document.getElementById("ID").textContent = data.id;
+            document.getElementById("STATUS-col").style.backgroundColor =
+                data.cam_status.toLowerCase() === "online" ? "#2ecc40" :
+                data.cam_status.toLowerCase() === "offline" ? "#e74c3c" : "#fbc02d";
+            document.getElementById("status").textContent = data.cam_status;
+            document.getElementById("status").className = "cam-status " + data.cam_status.toLowerCase();
+            document.getElementById("uptime").textContent = data.uptime + "%";
+            document.getElementById("location").textContent = data.location;
+            document.getElementById("zone").textContent = data.zone;
+        });
+        }
+    }
+       
+
+        let intervaltime=localStorage.getItem('refreshInterval')||"10 seconds";
+        let arr=intervaltime.split(' ');
+        let val=parseInt(arr[0]);
+        let unit=arr[1];
+        let ms=10000;
+        if(unit==='seconds'){
+            ms=val*1000;
+        }
+        else{
+            ms=val*60*1000;
+        }
+        setInterval(livecams,ms);
+        livecams();
 
         fetch('navpartial.html')
             .then(response => response.text())
